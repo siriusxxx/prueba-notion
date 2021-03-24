@@ -1,0 +1,59 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.3'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.prueba'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	
+	implementation 'org.projectlombok:lombok:1.18.18'
+	compileOnly 'org.projectlombok:lombok:1.18.18'
+	annotationProcessor 'org.projectlombok:lombok:1.18.18'
+	testCompileOnly 'org.projectlombok:lombok:1.18.18'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.18'
+	
+	implementation 'org.springframework.data:spring-data-jpa:2.4.5'
+	testImplementation 'org.springframework.data:spring-data-jpa:2.4.5'
+	
+	implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+	implementation group: 'io.github.openfeign', name: 'feign-core', version: '11.1'
+	
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.4.3'
+	
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.23'
+	
+	// https://mvnrepository.com/artifact/org.springframework/spring-core
+	implementation group: 'org.springframework', name: 'spring-core', version: '5.3.5'
+	
+	// https://mvnrepository.com/artifact/org.springframework/spring-context
+	implementation group: 'org.springframework', name: 'spring-context', version: '5.3.5'
+	
+	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies
+	runtimeOnly group: 'org.springframework.cloud', name: 'spring-cloud-dependencies', version: 'Hoxton.SR10', ext: 'pom'
+	
+	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.0.1'
+	
+	// https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+	implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+	
+	// https://mvnrepository.com/artifact/org.json/json
+implementation group: 'org.json', name: 'json', version: '20210307'
+	
+	
+	
+}
+
+test {
+	useJUnitPlatform()
+}
