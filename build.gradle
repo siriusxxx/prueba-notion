@@ -5,8 +5,15 @@ plugins {
 }
 
 group = 'com.prueba'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 sourceCompatibility = '11'
+
+jar {
+	manifest {
+		attributes 'Implementation-Title': 'rest-api-service',
+				   'Implementation-Version': version
+	}
+}
 
 repositories {
 	mavenCentral()

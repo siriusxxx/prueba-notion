@@ -42,24 +42,43 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * The Class UserService.
+ */
 @RestController
 @RequestMapping(value = ModelConstants.REST_API_URI_USER)
 public class UserService {
 
+	/** The user repository. */
 	@Autowired
 	UserRepository userRepository;
+	
+	/** The phone repository. */
 	@Autowired
 	PhoneRepository phoneRepository;
+	
+	/** The contact repository. */
 	@Autowired
 	ContactRepository contactRepository;
+	
+	/** The converter. */
 	@Autowired
 	Converter converter;
 	
+	/**
+	 * Creates the.
+	 *
+	 * @param user the user
+	 * @return the user
+	 * @throws PhoneFoundException the phone found exception
+	 * @throws CreateUserException the create user exception
+	 * @throws PhoneValidateException the phone validate exception
+	 */
 	public User create(final User user) throws PhoneFoundException, CreateUserException, PhoneValidateException {
 		PhoneEntity phoneEntity = null;
-//		if(!this.validPhone(user.getPhone())){
-//			throw new PhoneValidateException("El número de teléfono no es válido, revise el código de país");
-//		}
+		if(!this.validPhone(user.getPhone())){
+			throw new PhoneValidateException("El número de teléfono no es válido, revise el código de país");
+		}
 		if( user.getPhone().getNumber()!= null) {
 			Optional<UserEntity> phone = userRepository.findByPhoneNumber(user.getPhone().getNumber());
 			if(phone.isPresent()) {
@@ -84,6 +103,16 @@ public class UserService {
     }
 	
 	
+	/**
+	 * Update contacts.
+	 *
+	 * @param contacts the contacts
+	 * @param userId the user id
+	 * @throws PhoneFoundException the phone found exception
+	 * @throws CreateUserException the create user exception
+	 * @throws UserNotFoundException the user not found exception
+	 * @throws ContactException the contact exception
+	 */
 	public void updateContacts(final Set<Contact> contacts, Long userId) throws PhoneFoundException, CreateUserException, UserNotFoundException, ContactException {
 		Optional<UserEntity> userEntity = Optional.empty();
 		List<ContactEntity> contactsEntities = new ArrayList<ContactEntity>();
@@ -98,7 +127,6 @@ public class UserService {
 		}
 		try {
 			this.contactRepository.saveAll(contactsEntities);
-//			contactsEntities.forEach((final ContactEntity contact)-> this.contactRepository.saveAll(contact));
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -107,8 +135,14 @@ public class UserService {
 		
     }
 	
-	
-	
+	/**
+	 * Gets the contacts.
+	 *
+	 * @param userId the user id
+	 * @return the contacts
+	 * @throws UserNotFoundException the user not found exception
+	 * @throws BadRequestException the bad request exception
+	 */
 	public List<Contact> getContacts(Long userId) throws UserNotFoundException, BadRequestException {
 		UserEntity userEntity = null;
 		List<Contact> contacts = Collections.emptyList();
@@ -121,6 +155,15 @@ public class UserService {
 		return contacts;
 	}
 	
+	/**
+	 * Gets the common contacts.
+	 *
+	 * @param userId the user id
+	 * @param userId2 the user id 2
+	 * @return the common contacts
+	 * @throws UserNotFoundException the user not found exception
+	 * @throws BadRequestException the bad request exception
+	 */
 	public List<Contact> getCommonContacts(Long userId, Long userId2) throws UserNotFoundException, BadRequestException {
 		UserEntity userEntity = null;
 		UserEntity userEntity2 = null;
@@ -148,45 +191,30 @@ public class UserService {
 		return commons;
 	}
 
-	
-//	public ContactEntity convertContact(final Contact contact, Long userId) {
-////		PhoneEntity phoneEntity = new PhoneEntity(contact.getPhone(),null,null);
-//		PhoneEntity phoneEntity = PhoneEntity.builder().number(contact.getPhone()).build();
-//		ContactEntity contactEntity = ContactEntity.builder().userId(userId).contactName(contact.getContactName()).phone(phoneEntity).build();
-//		return contactEntity;
-//		
-//																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																															
-//	}
-//	
-//	public Contact convertContact(final ContactEntity contactEntity) {
-////		PhoneEntity phoneEntity = new PhoneEntity(contactEntity.getPhone().getNumber(), contactEntity.getPhone().getCountryCode(), contactEntity.getPhone().getIp());
-//		String completeNumber = (contactEntity.getPhone().getCountryCode() != null?contactEntity.getPhone().getCountryCode():"") + contactEntity.getPhone().getNumber();  
-//		return new Contact(contactEntity.getContactName(),completeNumber);
-//		
-//	}
-	
+	/**
+	 * Check contacts.
+	 *
+	 * @param contactsEntities the contacts entities
+	 * @return the list
+	 */
 	public List<ContactEntity> checkContacts(List<ContactEntity> contactsEntities) {
 		contactsEntities.forEach(contact -> {
-//		    Optional<PhoneEntity> phoneFound = phoneRepository.findByNumber(contact.getPhone().getNumber());
 		    Optional<ContactEntity> contactFound = contactRepository.findByPhoneNumber(contact.getPhone().getNumber());
 		    if(contactFound.isPresent() && contact.getId() == null) {
-//		    	contact.setId(contactFound.get().getId());
 		    	contact.setPhone(contactFound.get().getPhone());
 		    }
 		});
 		return contactsEntities;
 		
 	}
-//	public UserEntity convertUser(final User user, Phone phone) {
-//		PhoneEntity phoneEntity = new PhoneEntity(phone.getNumber(), phone.getCountryCode(), phone.getIp());
-//		
-//		List<ContactEntity> contactsEntity = user.getContacts().stream().map(contact -> this.convertContact(contact,user.getId())).collect(Collectors.toList());
-//		
-//		UserEntity userEntity = UserEntity.builder().name(user.getName()).lastName(user.getLastName()).contacts(contactsEntity).phone(phoneEntity).build();
-//		return userEntity;
-//		
-//	}
-	
+
+	/**
+	 * Exist user.
+	 *
+	 * @param userId the user id
+	 * @return the user entity
+	 * @throws UserNotFoundException the user not found exception
+	 */
 	public UserEntity existUser(Long userId) throws UserNotFoundException {
 		Optional<UserEntity> userEntity = userRepository.findById(userId);
 		if(!userEntity.isPresent()) {
@@ -195,6 +223,13 @@ public class UserService {
 		return userEntity.get();
 	}
 	
+	/**
+	 * Valid phone.
+	 *
+	 * @param phone the phone
+	 * @return the boolean
+	 * @throws PhoneValidateException the phone validate exception
+	 */
 	public Boolean validPhone(Phone phone) throws PhoneValidateException {
 		PhoneResponse phoneResponse = new PhoneResponse() ;
 		 try
@@ -217,10 +252,8 @@ public class UserService {
 	            
 	            JSONObject json = new JSONObject(jsonStr);
 	        
-	            phoneResponse = this.convertPhoneResponse(json);
-//	            phoneResponse = objectMapper.readValue(json.toString(), PhoneResponse.class); 
+	            phoneResponse = this.converter.convertPhoneResponse(json);
 	            
-
 	        }
 	        catch (IOException | ParseException | JSONException ex)
 	        {
@@ -230,21 +263,6 @@ public class UserService {
 		return phoneResponse.getValid();
 		
 	}
-	public PhoneResponse convertPhoneResponse(JSONObject json ) {
-		return PhoneResponse.builder()
-				.country(json.getString("country"))
-				.countryCode(json.getString("country-code"))
-				.countryCode3(json.getString("country-code3"))
-				.currencyCode(json.getString("currency-code"))
-				.internationalCallingCode(json.getInt("international-calling-code"))
-				.internationalNumber(json.getString("international-number"))
-				.isMobile(json.getBoolean("is-mobile"))
-				.localNumber(json.getString("local-number"))
-				.location(json.getString("location"))
-				.network(json.getString("prefix-network"))
-				.type(json.getString("type"))
-				.valid(json.getBoolean("valid"))
-				.build();
-	}
+	
 	
 }
