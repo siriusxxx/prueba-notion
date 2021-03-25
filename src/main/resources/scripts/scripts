@@ -1,0 +1,29 @@
+CREATE TABLE `phone` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `phone_number` varchar(50) NOT NULL,
+  `countrycode` varchar(3) DEFAULT NULL,
+  `ip` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `phone_number_UNIQUE` (`phone_number`)
+) 
+
+CREATE TABLE `contact` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `contactName` varchar(50) NOT NULL,
+  `phone_id` bigint DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `phone_user` (`phone_id`,`user_id`),
+  KEY `contact_phone` (`phone_id`),
+  CONSTRAINT `contact_phone` FOREIGN KEY (`phone_id`) REFERENCES `phone` (`id`)
+) 
+
+SELECT * FROM prueba.phone;CREATE TABLE `user` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `lastName` varchar(50) NOT NULL,
+  `phone_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_phone` (`phone_id`),
+  CONSTRAINT `user_phone` FOREIGN KEY (`phone_id`) REFERENCES `phone` (`id`)
+) 
